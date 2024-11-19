@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "../ui/button";
+import Link from "next/link";
 
 const Main = () => {
   return (
@@ -17,7 +18,7 @@ const Main = () => {
             </p>
           </div>
           <div className="space-x-4">
-            <Button>Get Started</Button>
+            <Link href={"/projects/create"}><Button >Get Started</Button></Link>
             <Button variant="outline">Learn More</Button>
           </div>
         </div>

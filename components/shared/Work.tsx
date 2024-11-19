@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button } from '../ui/button'
 import { ArrowRight } from 'lucide-react'
+import Link from 'next/link'
 
 const Work = () => {
   return (
@@ -53,10 +54,10 @@ const Work = () => {
                 API key management.
               </p>
             </div>
-            <Button className="inline-flex items-center">
+            <Link href={"/projects/create"}><Button className="inline-flex items-center">
               Get Started Now
               <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            </Button></Link>
           </div>
         </div>
       </section>
