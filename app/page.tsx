@@ -6,8 +6,9 @@ import Work from "@/components/shared/Work";
 
 export default function Home() {
   return (
-    <div className="flex flex-col  justify-center items-center min-h-screen">
+    <>
       <Navbar />
+    <div className="flex flex-col  justify-center items-center min-h-screen">
 
       <Main />
       <Feature />
@@ -15,5 +16,6 @@ export default function Home() {
 
       <Footer />
     </div>
+    </>
   );
 }
