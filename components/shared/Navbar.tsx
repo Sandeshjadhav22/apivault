@@ -1,0 +1,35 @@
+import { Key } from 'lucide-react'
+import React from 'react'
+
+const Navbar = () => {
+  return (
+    <header className="px-4 lg:px-6 h-14 flex items-center">
+        <a className="flex items-center justify-center" href="#">
+          <Key className="h-6 w-6 mr-2" />
+          <span className="font-bold">APIKeyVault</span>
+        </a>
+        <nav className="ml-auto flex gap-4 sm:gap-6">
+          <a
+            className="text-sm font-medium hover:underline underline-offset-4"
+            href="#features"
+          >
+            Features
+          </a>
+          <a
+            className="text-sm font-medium hover:underline underline-offset-4"
+            href="#how-it-works"
+          >
+            How It Works
+          </a>
+          <a
+            className="text-sm font-medium hover:underline underline-offset-4"
+            href="#pricing"
+          >
+            Pricing
+          </a>
+        </nav>
+      </header>
+  )
+}
+
+export default Navbar
