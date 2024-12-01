@@ -36,10 +36,11 @@ export default function CreateProject() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // Here you would typically send the data to your backend
+
     console.log('Project Name:', projectName)
     console.log('API Keys:', apiKeys)
-    // Reset form after submission
+      
+    
     setProjectName('')
     setApiKeys([{ name: '', key: '' }])
   }
