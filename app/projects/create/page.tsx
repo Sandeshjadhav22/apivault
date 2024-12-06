@@ -1,49 +1,83 @@
-"use client"
-import React, { useState } from 'react'
-import { PlusCircle, Trash2 } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+"use client";
+import React, { useState } from "react";
+import { PlusCircle, Trash2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface ApiKey {
-  name: string
-  key: string
+  name: string;
+  key: string;
 }
 
 export default function CreateProject() {
-  const [projectName, setProjectName] = useState('')
-  const [apiKeys, setApiKeys] = useState<ApiKey[]>([{ name: '', key: '' }])
+  const [projectName, setProjectName] = useState("");
+  const [apiKeys, setApiKeys] = useState<ApiKey[]>([{ name: "", key: "" }]);
+  const [error, setError] = useState("");
 
   const handleAddApiKey = () => {
-    setApiKeys([...apiKeys, { name: '', key: '' }])
-  }
+    setApiKeys([...apiKeys, { name: "", key: "" }]);
+  };
 
   const handleRemoveApiKey = (index: number) => {
-    const newApiKeys = apiKeys.filter((_, i) => i !== index)
-    setApiKeys(newApiKeys)
-  }
+    const newApiKeys = apiKeys.filter((_, i) => i !== index);
+    setApiKeys(newApiKeys);
+  };
 
-  const handleApiKeyChange = (index: number, field: keyof ApiKey, value: string) => {
+  const handleApiKeyChange = (
+    index: number,
+    field: keyof ApiKey,
+    value: string
+  ) => {
     const newApiKeys = apiKeys.map((apiKey, i) => {
       if (i === index) {
-        return { ...apiKey, [field]: value }
+        return { ...apiKey, [field]: value };
       }
-      return apiKey
-    })
-    setApiKeys(newApiKeys)
-  }
+      return apiKey;
+    });
+    setApiKeys(newApiKeys);
+  };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    const userId = "674c7a04eae9505ee3e27b19";
 
-    console.log('Project Name:', projectName)
-    console.log('API Keys:', apiKeys)
-      
-    
-    setProjectName('')
-    setApiKeys([{ name: '', key: '' }])
-  }
+    try {
+      const bodyData = {
+        projectName,
+        userId,
+        apiKeys,
+      };
+      const response = await fetch(
+        "https://apivalut-backend.vercel.app/api/projects/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(bodyData),
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.message || "Failed to created project");
+        return;
+      }
+
+      setProjectName("");
+      setApiKeys([{ name: "", key: "" }]);
+    } catch (error) {
+      setError("Something went wrong. Please try again");
+      console.error("Error during project submiting...", error);
+    }
+
+    console.log("Project Name:", projectName);
+    console.log("API Keys:", apiKeys);
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -78,7 +112,9 @@ export default function CreateProject() {
                   <Input
                     id={`apiKeyName-${index}`}
                     value={apiKey.name}
-                    onChange={(e) => handleApiKeyChange(index, 'name', e.target.value)}
+                    onChange={(e) =>
+                      handleApiKeyChange(index, "name", e.target.value)
+                    }
                     placeholder="Enter API key name"
                     required
                   />
@@ -88,7 +124,9 @@ export default function CreateProject() {
                   <Input
                     id={`apiKey-${index}`}
                     value={apiKey.key}
-                    onChange={(e) => handleApiKeyChange(index, 'key', e.target.value)}
+                    onChange={(e) =>
+                      handleApiKeyChange(index, "key", e.target.value)
+                    }
                     placeholder="Enter API key"
                     required
                   />
@@ -107,7 +145,12 @@ export default function CreateProject() {
                 </div>
               </div>
             ))}
-            <Button type="button" variant="outline" onClick={handleAddApiKey} className="mt-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleAddApiKey}
+              className="mt-2"
+            >
               <PlusCircle className="mr-2 h-4 w-4" /> Add Another API Key
             </Button>
           </CardContent>
@@ -117,6 +160,7 @@ export default function CreateProject() {
           <Button type="submit">Create Project</Button>
         </div>
       </form>
+      {error && <p className="text-red-500 mt-4">{error}</p>}
     </div>
-  )
+  );
 }
