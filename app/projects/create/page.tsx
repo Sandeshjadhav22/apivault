@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import toast from "react-hot-toast";
 
 interface ApiKey {
   name: string;
@@ -15,6 +16,7 @@ export default function CreateProject() {
   const [projectName, setProjectName] = useState("");
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([{ name: "", key: "" }]);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false)
 
   const handleAddApiKey = () => {
     setApiKeys([...apiKeys, { name: "", key: "" }]);
@@ -42,6 +44,7 @@ export default function CreateProject() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setLoading(true)
     const userId = "674c7a04eae9505ee3e27b19";
 
     try {
@@ -67,12 +70,15 @@ export default function CreateProject() {
         setError(errorData.message || "Failed to created project");
         return;
       }
+      setLoading(false)
+      toast.success("Project created successfully!!", { duration: 4000 });
 
       setProjectName("");
       setApiKeys([{ name: "", key: "" }]);
     } catch (error) {
       setError("Something went wrong. Please try again");
       console.error("Error during project submiting...", error);
+      toast.error("This is an error!");
     }
 
     console.log("Project Name:", projectName);
@@ -157,7 +163,7 @@ export default function CreateProject() {
         </Card>
 
         <div className="flex justify-end">
-          <Button type="submit">Create Project</Button>
+          <Button type="submit" disabled={loading}>{loading ? 'Creating Project...':'Create Project'}</Button>
         </div>
       </form>
       {error && <p className="text-red-500 mt-4">{error}</p>}
