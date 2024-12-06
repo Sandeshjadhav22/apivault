@@ -7,15 +7,14 @@ import Work from "@/components/shared/Work";
 export default function Home() {
   return (
     <>
-      <Navbar />
-    <div className="flex flex-col  justify-center items-center min-h-screen">
-
-      <Main />
-      <Feature />
-      <Work />
-
-      <Footer />
-    </div>
+      <div><Navbar /></div>
+      
+      <div className="flex flex-col  justify-center items-center min-h-screen w-full">
+        <Main />
+        <Feature />
+        <Work />
+        <Footer />
+      </div>
     </>
   );
 }

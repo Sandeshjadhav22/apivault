@@ -13,10 +13,9 @@ import { Key } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
-const SignUp = () => {
+const LogIn = () => {
   const router = useRouter();  
   const [formData, setFormData] = useState({
-    username: "",
     email: "",
     password: "",
   });
@@ -36,7 +35,7 @@ const SignUp = () => {
 
     try {
       const response = await fetch(
-        "https://apivalut-backend.vercel.app/api/users/signup",
+        "https://apivalut-backend.vercel.app/api/users/login",
         {
           method: "POST",
           headers: {
@@ -49,20 +48,20 @@ const SignUp = () => {
 
       if (!response.ok) {
         const data = await response.json();
-        setError(data.message || "failed to signup");
+        setError(data.message || "failed to login");
         return;
       }
 
-      setSuccess("Signup successfull");
+      setSuccess("Login successfull");
       setTimeout(()=>{
       router.push("/")
       },2000)
     } catch (error) {
       setError("Something went wrong. Please try again.");
-      console.error("Error during signup:", error);
+      console.error("Error during login:", error);
     }
 
-    console.log("Sign in submitted");
+    console.log("login in submitted");
   };
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 sm:px-6 lg:px-8">
@@ -70,21 +69,11 @@ const SignUp = () => {
         <CardHeader className="space-y-1">
           <div className="flex items-center justify-center">
             <Key className="h-6 w-6 mr-2" />
-            <CardTitle className="text-2xl font-bold">Sign Up</CardTitle>
+            <CardTitle className="text-2xl font-bold">Log In</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
-              <Input
-                id="username"
-                placeholder="Enter your username"
-                value={formData.username}
-                required
-                onChange={handleChange}
-              />
-            </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -107,7 +96,7 @@ const SignUp = () => {
               />
             </div>
             <Button type="submit" className="w-full">
-              Sign Up
+              Log In
             </Button>
           </form>
 
@@ -116,9 +105,9 @@ const SignUp = () => {
         </CardContent>
         <CardFooter>
           <p className="text-sm text-center w-full text-gray-600">
-            already have an account?{" "}
-            <a href="/login" className="font-medium text-blue-600 hover:underline">
-              log in
+            Don&rsquo;t have an account?{" "}
+            <a href="signup" className="font-medium text-blue-600 hover:underline">
+              Sign Up
             </a>
           </p>
         </CardFooter>
@@ -127,4 +116,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default LogIn;
