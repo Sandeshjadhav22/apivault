@@ -45,7 +45,8 @@ export default function CreateProject() {
     e.preventDefault();
     setError("");
     setLoading(true)
-    const userId = "674c7a04eae9505ee3e27b19";
+    // const userId = "674c7a04eae9505ee3e27b19";
+    const userId = localStorage.getItem("userId");
 
     try {
       const bodyData = {

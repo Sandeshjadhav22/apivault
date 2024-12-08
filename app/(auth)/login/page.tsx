@@ -51,7 +51,9 @@ const LogIn = () => {
         setError(data.message || "failed to login");
         return;
       }
-
+      const {_id} = await response.json();
+      localStorage.setItem("userId",_id)
+    
       setSuccess("Login successfull");
       setTimeout(()=>{
       router.push("/")
