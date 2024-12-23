@@ -16,6 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Eye, EyeOff, Pencil, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 // const projects = [
@@ -47,6 +48,7 @@ interface Project {
 }
 
 const ProjectPage = () => {
+  const router = useRouter();
   const [visibleKeys, setVisibleKeys] = React.useState<
     Record<number, Record<number, boolean>>
   >({});
@@ -112,7 +114,18 @@ const ProjectPage = () => {
       <h1 className="text-3xl font-bold mb-6">All Projects</h1>
       {loading && <p>Loading projects...</p>}
       {error && <p className="text-red-500">{error}</p>}
-      {!loading && !projects.length && <p>No projects found.</p>}
+      {!loading && !projects.length && (
+        <div className="flex flex-col items-center">
+          <p>No projects found.</p>
+          <Button
+            variant="default"
+            className="mt-4"
+            onClick={() => router.push("/create-project")}
+          >
+            Create Project
+          </Button>
+        </div>
+      )}
       <div className="grid gap-7 md:grid-cols-2 lg:grid-cols-3">
         {!loading && projects.map((project, index) => (
           <Card key={project._id || index}>
