@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 interface ApiKey {
   name: string;
@@ -13,10 +14,11 @@ interface ApiKey {
 }
 
 export default function CreateProject() {
+  const router = useRouter();
   const [projectName, setProjectName] = useState("");
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([{ name: "", key: "" }]);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const handleAddApiKey = () => {
     setApiKeys([...apiKeys, { name: "", key: "" }]);
@@ -44,7 +46,7 @@ export default function CreateProject() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    setLoading(true)
+    setLoading(true);
     // const userId = "674c7a04eae9505ee3e27b19";
     const userId = localStorage.getItem("userId");
 
@@ -71,7 +73,7 @@ export default function CreateProject() {
         setError(errorData.message || "Failed to created project");
         return;
       }
-      setLoading(false)
+      setLoading(false);
       toast.success("Project created successfully!!", { duration: 4000 });
 
       setProjectName("");
@@ -88,7 +90,16 @@ export default function CreateProject() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Create New Project</h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold mb-6">Create New Project</h1>
+        <Button
+          variant="default"
+          className="mb-4"
+          onClick={() => router.push("/projects")}
+        >
+          My Projects
+        </Button>
+      </div>
       <form onSubmit={handleSubmit}>
         <Card className="mb-6">
           <CardHeader>
@@ -164,7 +175,9 @@ export default function CreateProject() {
         </Card>
 
         <div className="flex justify-end">
-          <Button type="submit" disabled={loading}>{loading ? 'Creating Project...':'Create Project'}</Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Creating Project..." : "Create Project"}
+          </Button>
         </div>
       </form>
       {error && <p className="text-red-500 mt-4">{error}</p>}

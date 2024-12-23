@@ -138,7 +138,17 @@ const ProjectPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">All Projects</h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold mb-6">All Projects</h1>
+        <Button
+          variant="default"
+          className="mb-4"
+          onClick={() => router.push("/projects/create")}
+        >
+          Create Project
+        </Button>
+      </div>
+
       {loading && <p>Loading projects...</p>}
       {error && <p className="text-red-500">{error}</p>}
       {!loading && !projects.length && (
@@ -147,7 +157,7 @@ const ProjectPage = () => {
           <Button
             variant="default"
             className="mt-4"
-            onClick={() => router.push("/create")}
+            onClick={() => router.push("/projects/create")}
           >
             Create Project
           </Button>
@@ -160,17 +170,12 @@ const ProjectPage = () => {
               <CardHeader>
                 <CardTitle>
                   <div className="flex items-center justify-between">
-                    {project.projectName}{" "}
+                    {project.projectName}
                     <AlertDialog>
                       <AlertDialogTrigger>
-                        {" "}
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          disabled={deletingProjectId === project._id}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <div className="flex  items-center p-2 space-x-2 rounded-md hover:bg-red-50 ">
+                          <Trash2 className="h-4 w-4 " />
+                        </div>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
@@ -212,7 +217,7 @@ const ProjectPage = () => {
                           className="mb-4 last:mb-0"
                         >
                           <div className="flex justify-between items-center mb-2">
-                            <span className="font-medium">{apiKey.name}</span>
+                            <span className=" font-semibold">{apiKey.name}</span>
                             <Button
                               variant="ghost"
                               size="sm"
