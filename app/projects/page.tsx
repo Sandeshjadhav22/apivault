@@ -5,6 +5,17 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,22 +29,6 @@ import {
 import { Eye, EyeOff, Pencil, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-
-// const projects = [
-//   {
-//     id: 1,
-//     name: "Project Alpha",
-//     apiKeys: [
-//       { id: 1, name: "Production API Key", key: "prod_abcdefghijklmnop" },
-//       { id: 2, name: "Development API Key", key: "dev_qrstuvwxyz123456" },
-//     ],
-//   },
-//   {
-//     id: 2,
-//     name: "Project Beta",
-//     apiKeys: [{ id: 3, name: "Main API Key", key: "main_7890abcdefghijkl" }],
-//   },
-// ];
 
 interface ApiKey {
   _id: number;
@@ -56,6 +51,9 @@ const ProjectPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [error, setError] = useState<string>("");
+  const [deletingProjectId, setDeletingProjectId] = useState<number | null>(
+    null
+  );
 
   const toggleKeyVisibility = (projectId: number, keyId: number) => {
     setVisibleKeys((prev) => ({
@@ -67,45 +65,74 @@ const ProjectPage = () => {
     }));
   };
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        setLoading(true);
-        // const userId = localStorage.getItem("userId");
-        const token = localStorage.getItem("authToken");
-        // if (!userId) {
-        //   setError("User ID not found. Please log in.");
-        //   return;
-        // }
-        const response = await fetch(
-          "https://apivalut-backend.vercel.app/api/projects/getAllProjects",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            credentials: "include",
-          }
-        );
-        console.log("Response status:", response.status); // log the response status
-        if (!response.ok) {
-          const message = await response.json();
-          console.error("Response error body:", message); // log the error message
-          throw new Error(message.error || "Failed to fetch projects");
+  const fetchProjects = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("authToken");
+      const response = await fetch(
+        "https://apivalut-backend.vercel.app/api/projects/getAllProjects",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: "include",
         }
-
-        const data = await response.json();
-        console.log("Projects data:", data); // log the projects data
-        setProjects(data.projects);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error in fetching projects", error);
-        setError("Failed to load projects. Please try again later.");
-      }finally{
-        setLoading(false);
+      );
+      console.log("Response status:", response.status); // log the response status
+      if (!response.ok) {
+        const message = await response.json();
+        console.error("Response error body:", message); // log the error message
+        throw new Error(message.error || "Failed to fetch projects");
       }
-    };
+
+      const data = await response.json();
+      console.log("Projects data:", data); // log the projects data
+      setProjects(data.projects);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error in fetching projects", error);
+      setError("Failed to load projects. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteProject = async (projectId: number) => {
+    try {
+      setDeletingProjectId(projectId);
+      const token = localStorage.getItem("authToken");
+      const response = await fetch(
+        `https://apivalut-backend.vercel.app/api/projects/${projectId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: "include",
+        }
+      );
+      console.log("Response status:", response.status);
+      if (!response.ok) {
+        const message = await response.json();
+        console.error("Response error body:", message);
+        throw new Error(message.error || "Failed to delete project");
+      }
+
+      setProjects((prevProjects) =>
+        prevProjects.filter((project) => project._id !== projectId)
+      );
+    } catch (error) {
+      setError("Failed to delete project. Please try again later.");
+      console.error("Error in deleting project", error);
+    } finally {
+      setDeletingProjectId(null);
+    }
+  };
+
+  useEffect(() => {
     fetchProjects();
   }, []);
 
@@ -120,75 +147,117 @@ const ProjectPage = () => {
           <Button
             variant="default"
             className="mt-4"
-            onClick={() => router.push("/create-project")}
+            onClick={() => router.push("/create")}
           >
             Create Project
           </Button>
         </div>
       )}
       <div className="grid gap-7 md:grid-cols-2 lg:grid-cols-3">
-        {!loading && projects.map((project, index) => (
-          <Card key={project._id || index}>
-            <CardHeader>
-              <CardTitle>{project.projectName}  </CardTitle>
-              <CardDescription>
-                {project.apikeys?.length} API Key(s) 
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Accordion type="single" collapsible className="w-full">
-                <AccordionItem value="api-keys">
-                  <AccordionTrigger>View API Keys</AccordionTrigger>
-                  <AccordionContent>
-                    {project.apikeys?.map((apiKey, index) => (
-                      <div key={apiKey._id || index} className="mb-4 last:mb-0">
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="font-medium">{apiKey.name}</span>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() =>
-                              toggleKeyVisibility(project._id, apiKey._id)
-                            }
+        {!loading &&
+          projects.map((project, index) => (
+            <Card key={project._id || index}>
+              <CardHeader>
+                <CardTitle>
+                  <div className="flex items-center justify-between">
+                    {project.projectName}{" "}
+                    <AlertDialog>
+                      <AlertDialogTrigger>
+                        {" "}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={deletingProjectId === project._id}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Are you absolutely sure to delete ?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently
+                            delete your Project and remove your data from our
+                            servers.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleDeleteProject(project._id)}
                           >
-                            {visibleKeys[project._id]?.[apiKey._id] ? (
-                              <EyeOff className="h-4 w-4" />
-                            ) : (
-                              <Eye className="h-4 w-4" />
-                            )}
-                          </Button>
+                            {deletingProjectId === project._id
+                              ? "Deleting..."
+                              : "Delete"}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </CardTitle>
+                <CardDescription>
+                  {project.apikeys?.length} API Key(s)
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="api-keys">
+                    <AccordionTrigger>View API Keys</AccordionTrigger>
+                    <AccordionContent>
+                      {project.apikeys?.map((apiKey, index) => (
+                        <div
+                          key={apiKey._id || index}
+                          className="mb-4 last:mb-0"
+                        >
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="font-medium">{apiKey.name}</span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() =>
+                                toggleKeyVisibility(project._id, apiKey._id)
+                              }
+                            >
+                              {visibleKeys[project._id]?.[apiKey._id] ? (
+                                <EyeOff className="h-4 w-4" />
+                              ) : (
+                                <Eye className="h-4 w-4" />
+                              )}
+                            </Button>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Badge
+                              variant="secondary"
+                              className="font-mono text-xs"
+                            >
+                              {visibleKeys[project._id]?.[apiKey._id]
+                                ? apiKey.encryptedKey
+                                : apiKey.encryptedKey
+                                ? apiKey.encryptedKey.replace(/./g, "•")
+                                : "No Key Available"}
+                            </Badge>
+                            <Button variant="ghost" size="sm">
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <Badge
-                            variant="secondary"
-                            className="font-mono text-xs"
-                          >
-                            {visibleKeys[project._id]?.[apiKey._id]
-                              ? apiKey.encryptedKey
-                              : apiKey.encryptedKey
-                              ? apiKey.encryptedKey.replace(/./g, "•")
-                              : "No Key Available"} 
-                          </Badge>
-                          <Button variant="ghost" size="sm">
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            </CardContent>
-            <CardFooter>
-              <Button variant="outline" className="w-full">
-                Manage Project
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
+                      ))}
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </CardContent>
+              <CardFooter>
+                <Button variant="outline" className="w-full">
+                  Manage Project
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
       </div>
     </div>
   );
