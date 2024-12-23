@@ -18,7 +18,7 @@ const Main = () => {
             </p>
           </div>
           <div className="space-x-4">
-            <Link href={"/projects/create"}><Button >Get Started</Button></Link>
+            <Link href={"/projects"}><Button >Get Started</Button></Link>
             <Button variant="outline">Learn More</Button>
           </div>
         </div>

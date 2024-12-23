@@ -51,8 +51,9 @@ const LogIn = () => {
         setError(data.message || "failed to login");
         return;
       }
-      const {_id} = await response.json();
+      const {_id, token} = await response.json();
       localStorage.setItem("userId",_id)
+      localStorage.setItem("authToken",token)
     
       setSuccess("Login successfull");
       setTimeout(()=>{
