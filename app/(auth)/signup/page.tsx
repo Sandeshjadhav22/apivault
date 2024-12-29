@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Key } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const SignUp = () => {
   const router = useRouter();  
@@ -23,6 +23,16 @@ const SignUp = () => {
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  useEffect(() => {
+    // Check if we're on the client side before accessing localStorage
+    if (typeof window !== 'undefined') {
+      const authToken = localStorage.getItem('authToken');
+      if (authToken) {
+        router.push('/');
+      }
+    }
+  }, [router]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = event.target;
