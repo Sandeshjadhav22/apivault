@@ -1,4 +1,5 @@
 "use client";
+import Navbar from "@/components/shared/Navbar";
 import {
   Accordion,
   AccordionContent,
@@ -137,134 +138,141 @@ const ProjectPage = () => {
   }, []);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold mb-6">All Projects</h1>
-        <Button
-          variant="default"
-          className="mb-4"
-          onClick={() => router.push("/projects/create")}
-        >
-          Create Project
-        </Button>
+    <>
+      <div>
+        <Navbar />
       </div>
-
-      {loading && <p>Loading projects...</p>}
-      {error && <p className="text-red-500">{error}</p>}
-      {!loading && !projects.length && (
-        <div className="flex flex-col items-center">
-          <p>No projects found.</p>
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold mb-6">All Projects</h1>
           <Button
             variant="default"
-            className="mt-4"
+            className="mb-4"
             onClick={() => router.push("/projects/create")}
           >
             Create Project
           </Button>
         </div>
-      )}
-      <div className="grid gap-7 md:grid-cols-2 lg:grid-cols-3">
-        {!loading &&
-          projects.map((project, index) => (
-            <Card key={project._id || index}>
-              <CardHeader>
-                <CardTitle>
-                  <div className="flex items-center justify-between">
-                    {project.projectName}
-                    <AlertDialog>
-                      <AlertDialogTrigger>
-                        <div className="flex  items-center p-2 space-x-2 rounded-md hover:bg-red-50 ">
-                          <Trash2 className="h-4 w-4 " />
-                        </div>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Are you absolutely sure to delete ?
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This action cannot be undone. This will permanently
-                            delete your Project and remove your data from our
-                            servers.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={() => handleDeleteProject(project._id)}
+
+        {loading && <p>Loading projects...</p>}
+        {error && <p className="text-red-500">{error}</p>}
+        {!loading && !projects.length && (
+          <div className="flex flex-col items-center">
+            <p>No projects found.</p>
+            <Button
+              variant="default"
+              className="mt-4"
+              onClick={() => router.push("/projects/create")}
+            >
+              Create Project
+            </Button>
+          </div>
+        )}
+        <div className="grid gap-7 md:grid-cols-2 lg:grid-cols-3">
+          {!loading &&
+            projects.map((project, index) => (
+              <Card key={project._id || index}>
+                <CardHeader>
+                  <CardTitle>
+                    <div className="flex items-center justify-between">
+                      {project.projectName}
+                      <AlertDialog>
+                        <AlertDialogTrigger>
+                          <div className="flex  items-center p-2 space-x-2 rounded-md hover:bg-red-50 ">
+                            <Trash2 className="h-4 w-4 " />
+                          </div>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Are you absolutely sure to delete ?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will
+                              permanently delete your Project and remove your
+                              data from our servers.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDeleteProject(project._id)}
+                            >
+                              {deletingProjectId === project._id
+                                ? "Deleting..."
+                                : "Delete"}
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </CardTitle>
+                  <CardDescription>
+                    {project.apikeys?.length} API Key(s)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value="api-keys">
+                      <AccordionTrigger>View API Keys</AccordionTrigger>
+                      <AccordionContent>
+                        {project.apikeys?.map((apiKey, index) => (
+                          <div
+                            key={apiKey._id || index}
+                            className="mb-4 last:mb-0"
                           >
-                            {deletingProjectId === project._id
-                              ? "Deleting..."
-                              : "Delete"}
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </div>
-                </CardTitle>
-                <CardDescription>
-                  {project.apikeys?.length} API Key(s)
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Accordion type="single" collapsible className="w-full">
-                  <AccordionItem value="api-keys">
-                    <AccordionTrigger>View API Keys</AccordionTrigger>
-                    <AccordionContent>
-                      {project.apikeys?.map((apiKey, index) => (
-                        <div
-                          key={apiKey._id || index}
-                          className="mb-4 last:mb-0"
-                        >
-                          <div className="flex justify-between items-center mb-2">
-                            <span className=" font-semibold">{apiKey.name}</span>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() =>
-                                toggleKeyVisibility(project._id, apiKey._id)
-                              }
-                            >
-                              {visibleKeys[project._id]?.[apiKey._id] ? (
-                                <EyeOff className="h-4 w-4" />
-                              ) : (
-                                <Eye className="h-4 w-4" />
-                              )}
-                            </Button>
+                            <div className="flex justify-between items-center mb-2">
+                              <span className=" font-semibold">
+                                {apiKey.name}
+                              </span>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() =>
+                                  toggleKeyVisibility(project._id, apiKey._id)
+                                }
+                              >
+                                {visibleKeys[project._id]?.[apiKey._id] ? (
+                                  <EyeOff className="h-4 w-4" />
+                                ) : (
+                                  <Eye className="h-4 w-4" />
+                                )}
+                              </Button>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Badge
+                                variant="secondary"
+                                className="font-mono text-xs"
+                              >
+                                {visibleKeys[project._id]?.[apiKey._id]
+                                  ? apiKey.encryptedKey
+                                  : apiKey.encryptedKey
+                                  ? apiKey.encryptedKey.replace(/./g, "•")
+                                  : "No Key Available"}
+                              </Badge>
+                              <Button variant="ghost" size="sm">
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button variant="ghost" size="sm">
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </div>
-                          <div className="flex items-center space-x-2">
-                            <Badge
-                              variant="secondary"
-                              className="font-mono text-xs"
-                            >
-                              {visibleKeys[project._id]?.[apiKey._id]
-                                ? apiKey.encryptedKey
-                                : apiKey.encryptedKey
-                                ? apiKey.encryptedKey.replace(/./g, "•")
-                                : "No Key Available"}
-                            </Badge>
-                            <Button variant="ghost" size="sm">
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                            <Button variant="ghost" size="sm">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-              </CardContent>
-              <CardFooter>
-                <Button variant="outline" className="w-full">
-                  Manage Project
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
+                        ))}
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </CardContent>
+                <CardFooter>
+                  <Button variant="outline" className="w-full">
+                    Manage Project
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
