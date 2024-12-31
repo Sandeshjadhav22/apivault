@@ -45,9 +45,16 @@ export default function CreateProject() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const authTokens = localStorage.getItem("authToken");
+    if (!authTokens) {
+      toast.error("Please login to create a project", { duration: 4000 });
+      router.push("/signup");
+      return;
+    }
+
     setError("");
     setLoading(true);
-    // const userId = "674c7a04eae9505ee3e27b19";
     const userId = localStorage.getItem("userId");
 
     try {

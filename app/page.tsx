@@ -4,20 +4,20 @@ import Footer from "@/components/shared/Footer";
 import Main from "@/components/shared/Main";
 import Navbar from "@/components/shared/Navbar";
 import Work from "@/components/shared/Work";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+// import { useRouter } from "next/navigation";
+// import { useEffect } from "react";
 
 export default function Home() {
-  const router = useRouter();
+  // const router = useRouter();
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const authToken = localStorage.getItem('authToken');
-      if (!authToken) {
-        router.push('/signup');
-      }
-    }
-  }, [router]);
+  // useEffect(() => {
+  //   if (typeof window !== 'undefined') {
+  //     const authToken = localStorage.getItem('authToken');
+  //     if (!authToken) {
+  //       router.push('/signup');
+  //     }
+  //   }
+  // }, [router]);
   return (
     <>
       <div><Navbar /></div>

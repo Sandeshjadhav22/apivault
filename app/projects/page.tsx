@@ -51,7 +51,7 @@ const ProjectPage = () => {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [projects, setProjects] = useState<Project[]>([]);
-  const [error, setError] = useState<string>("");
+  // const [error, setError] = useState<string>("");
   const [deletingProjectId, setDeletingProjectId] = useState<number | null>(
     null
   );
@@ -81,20 +81,16 @@ const ProjectPage = () => {
           credentials: "include",
         }
       );
-      console.log("Response status:", response.status); // log the response status
       if (!response.ok) {
         const message = await response.json();
-        console.error("Response error body:", message); // log the error message
         throw new Error(message.error || "Failed to fetch projects");
       }
 
       const data = await response.json();
-      console.log("Projects data:", data); // log the projects data
       setProjects(data.projects);
       setLoading(false);
     } catch (error) {
-      console.error("Error in fetching projects", error);
-      setError("Failed to load projects. Please try again later.");
+      console.log("Error in fetching projects", error);
     } finally {
       setLoading(false);
     }
@@ -126,7 +122,7 @@ const ProjectPage = () => {
         prevProjects.filter((project) => project._id !== projectId)
       );
     } catch (error) {
-      setError("Failed to delete project. Please try again later.");
+      // setError("Failed to delete project. Please try again later.");
       console.error("Error in deleting project", error);
     } finally {
       setDeletingProjectId(null);
@@ -155,7 +151,7 @@ const ProjectPage = () => {
         </div>
 
         {loading && <p>Loading projects...</p>}
-        {error && <p className="text-red-500">{error}</p>}
+        {/* {error && <p className="text-red-500">{error}</p>} */}
         {!loading && !projects.length && (
           <div className="flex flex-col items-center">
             <p>No projects found.</p>

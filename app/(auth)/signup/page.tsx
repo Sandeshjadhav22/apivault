@@ -43,7 +43,7 @@ const SignUp = () => {
     event.preventDefault();
     setError("");
     setSuccess("");
-
+ 
     try {
       const response = await fetch(
         "https://apivalut-backend.vercel.app/api/users/signup",
@@ -62,6 +62,9 @@ const SignUp = () => {
         setError(data.message || "failed to signup");
         return;
       }
+      const {_id, token} = await response.json();
+      localStorage.setItem("userId",_id)
+      localStorage.setItem("authToken",token)
 
       setSuccess("Signup successfull");
       setTimeout(()=>{
