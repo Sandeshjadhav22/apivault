@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -17,6 +18,9 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "Api Valut",
   description: "Secure API Key Management for Developers.",
+  // icons:{
+  //   icon:"/favicon.svg",
+  // }
 };
 
 export default function RootLayout({
@@ -31,6 +35,7 @@ export default function RootLayout({
       >
         <Toaster position="top-right"/>
         {children}
+        <Analytics/>
       </body>
     </html>
   );
