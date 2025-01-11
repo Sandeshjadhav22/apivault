@@ -85,9 +85,8 @@ export default function CreateProject() {
 
       setProjectName("");
       setApiKeys([{ name: "", key: "" }]);
-    } catch (error) {
+    } catch {
       setError("Something went wrong. Please try again");
-      console.error("Error during project submiting...", error);
       toast.error("This is an error!");
     }
 
